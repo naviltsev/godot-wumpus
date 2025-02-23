@@ -11,10 +11,19 @@ config_version=5
 [application]
 
 config/name="Wumpus"
-run/main_scene="uid://wa2gvb8fbk2n"
+run/main_scene="res://game.tscn"
 config/features=PackedStringArray("4.4", "Mobile")
 boot_splash/show_image=false
-config/icon="uid://cg5d1c0f44dn0"
+config/icon="res://assets/trending.svg"
+
+[autoload]
+
+Global="*res://global.gd"
+
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=800
 
 [rendering]
 
