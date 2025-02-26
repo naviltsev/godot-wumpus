@@ -83,7 +83,7 @@ func start_game(reshuffle_rooms: bool, clear_text_window: bool = false):
 	# then randomly chose start room
 	setup_start_room()
 
-func _post_turn_updates():
+func update_room_connections():
 	Global.connected_rooms = []
 	Global.connected_vertices = maze.vertice_connections[Global.current_room_vertice]
 	for v in Global.connected_vertices:
@@ -163,7 +163,7 @@ func pick_random_room() -> int:
 func setup_start_room():
 	Global.current_room_vertice = pick_random_room()
 	Global.current_room_name = maze.vertice_to_room[Global.current_room_vertice]
-	_post_turn_updates()
+	update_room_connections()
 
 func move_wumpus():
 	if Global.wumpus_asleep:
@@ -236,7 +236,7 @@ func on_move_context_button_pressed(vertice_id: int):
 
 	Global.current_room_vertice = vertice_id
 	Global.current_room_name = maze.vertice_to_room[Global.current_room_vertice]
-	_post_turn_updates()
+	update_room_connections()
 
 	tell_room_name()
 
