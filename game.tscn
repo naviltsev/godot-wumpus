@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=3 uid="uid://wa2gvb8fbk2n"]
+[gd_scene load_steps=4 format=3 uid="uid://wa2gvb8fbk2n"]
 
 [ext_resource type="Theme" uid="uid://de3namw7hkal8" path="res://resources/themes/ui.tres" id="1_ybel8"]
 [ext_resource type="Script" uid="uid://c3qa5jjpijp2r" path="res://game.gd" id="2_675k6"]
+[ext_resource type="Script" uid="uid://bdtbv80x3i177" path="res://instructions_rich_text_label.gd" id="3_feb5d"]
 
 [node name="Control" type="Control"]
 layout_mode = 3
@@ -68,27 +69,7 @@ text = "?"
 unique_name_in_owner = true
 layout_mode = 2
 bbcode_enabled = true
-text = "Hello
-
-This
-
-Is
-
-Placeholder
-
-For
-
-Player's
-
-Manual
-
-And
-
-Some
-
-Long
-
-Text"
+script = ExtResource("3_feb5d")
 
 [node name="HideInstructionsButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Panel/MarginContainer/InstructionsRichTextLabel"]
 layout_mode = 1
