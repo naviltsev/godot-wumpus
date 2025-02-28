@@ -1,13 +1,5 @@
 class_name Maze
 
-# inner 5
-# 1, 2, 3, 4, 5
-# they connect to middle 5
-# 6, 7, 8, 9, 10
-# middle five has also
-# 11, 12, 13, 14, 15
-# they connect to outer 5
-# 16, 17, 18, 19, 20
 var vertice_connections: Dictionary = {
 	1: [2, 5, 8],
 	2: [1, 3, 10],

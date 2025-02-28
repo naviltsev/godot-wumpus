@@ -356,6 +356,9 @@ func _on_confirm_shoot_button_pressed():
 		if Global.bat_vertices.has(v):
 			Global.bat_vertices.erase(v)
 			append_new_line("\tThe bolt managed to defuse the Viral Storm on page %d!" % v)
+		if Global.pit_vertices.has(v):
+			Global.pit_vertices.erase(v)
+			append_new_line("\tThe bolt managed to deactivate Clickbait Loop on page %d!" % v)
 
 	move_wumpus() # move_wumpus() will update wumpus_vertice with 75% chance
 	if Global.wumpus_vertice == Global.current_room_vertice:
