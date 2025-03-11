@@ -14,64 +14,94 @@ grow_vertical = 2
 theme = ExtResource("1_ybel8")
 script = ExtResource("2_675k6")
 
-[node name="PanelContainer" type="PanelContainer" parent="."]
+[node name="MainContainer" type="PanelContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = -2.0
-offset_bottom = -2.0
 grow_horizontal = 2
 grow_vertical = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MainContainer"]
 layout_mode = 2
 
-[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer"]
+[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="TitleBar" type="PanelContainer" parent="MainContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_type_variation = &"TitleBar"
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MainContainer/MarginContainer/VBoxContainer/TitleBar"]
 layout_mode = 2
 
-[node name="PanelContainer" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="VersionLabel" type="Label" parent="MainContainer/MarginContainer/VBoxContainer/TitleBar/HBoxContainer"]
+layout_mode = 2
+text = "WUMPUS-OS v1.0.1"
+
+[node name="StatusLabel" type="Label" parent="MainContainer/MarginContainer/VBoxContainer/TitleBar/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 10
+text = "CONNECTED"
+
+[node name="ContentPanel" type="PanelContainer" parent="MainContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 3.0
 
-[node name="Panel" type="Panel" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="MainContainer/MarginContainer/VBoxContainer/ContentPanel"]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Panel"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+[node name="VBoxContainer" type="VBoxContainer" parent="MainContainer/MarginContainer/VBoxContainer/ContentPanel/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
 
-[node name="RichTextLabel" type="RichTextLabel" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Panel/MarginContainer"]
+[node name="TitleText" type="RichTextLabel" parent="MainContainer/MarginContainer/VBoxContainer/ContentPanel/MarginContainer/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+bbcode_enabled = true
+text = "[center][color=#FFD700]
+  _    _ _    _ _   _ _______   _______ _    _ ______  
+ | |  | | |  | | \\ | |__   __| |__   __| |  | |  ____| 
+ | |__| | |  | |  \\| |  | |       | |  | |__| | |__    
+ |  __  | |  | | . ` |  | |       | |  |  __  |  __|   
+ | |  | | |__| | |\\  |  | |       | |  | |  | | |____  
+ |_|  |_|\\____/|_| \\_|  |_|       |_|  |_|  |_|______| 
+                                                        
+ __          ___    _ __  __ _____  _    _  _____ 
+ \\ \\        / / |  | |  \\/  |  __ \\| |  | |/ ____|
+  \\ \\  /\\  / /| |  | | \\  / | |__) | |  | | (___  
+   \\ \\/  \\/ / | |  | | |\\/| |  ___/| |  | |\\___ \\ 
+    \\  /\\  /  | |__| | |  | | |    | |__| |____) |
+     \\/  \\/    \\____/|_|  |_|_|     \\____/|_____/ 
+[/color][/center]"
+fit_content = true
+
+[node name="MainText" type="RichTextLabel" parent="MainContainer/MarginContainer/VBoxContainer/ContentPanel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 bbcode_enabled = true
-text = "Hunt the SNARF
-"
+text = "Welcome to HUNT THE WUMPUS, a classic text adventure game.
+
+Your mission: Navigate through dark caves to find and defeat the Wumpus.
+But beware - the caves are filled with bottomless pits and deadly bats!
+
+Navigate through the maze, avoid traps, and use your arrows wisely.
+
+Commands: 'move [room]', 'shoot [room]', 'detect', 'help'
+
+Good luck, brave hunter!"
 scroll_following = true
 
-[node name="ShowInstructionsButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Panel/MarginContainer/RichTextLabel"]
-layout_mode = 1
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -46.0
-offset_bottom = 62.0
-grow_horizontal = 0
-text = "?"
-
-[node name="InstructionsRichTextLabel" type="RichTextLabel" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Panel/MarginContainer"]
+[node name="InstructionsText" type="RichTextLabel" parent="MainContainer/MarginContainer/VBoxContainer/ContentPanel/MarginContainer/VBoxContainer"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 bbcode_enabled = true
 script = ExtResource("3_feb5d")
 
-[node name="HideInstructionsButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Panel/MarginContainer/InstructionsRichTextLabel"]
+[node name="HideInstructionsButton" type="Button" parent="MainContainer/MarginContainer/VBoxContainer/ContentPanel/MarginContainer/VBoxContainer/InstructionsText"]
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -81,93 +111,80 @@ offset_bottom = 62.0
 grow_horizontal = 0
 text = "X"
 
-[node name="PanelContainer2" type="PanelContainer" parent="PanelContainer/MarginContainer/VBoxContainer"]
+[node name="StatusBar" type="PanelContainer" parent="MainContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
-size_flags_vertical = 3
+theme_type_variation = &"StatusBar"
 
-[node name="Panel" type="Panel" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer2"]
-layout_mode = 2
-
-[node name="HFlowContainer" type="HFlowContainer" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer2"]
+[node name="HBoxContainer" type="HBoxContainer" parent="MainContainer/MarginContainer/VBoxContainer/StatusBar"]
 layout_mode = 2
 
-[node name="MarginContainer" type="MarginContainer" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer2/HFlowContainer"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="BottomContainer" type="VBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer2/HFlowContainer/MarginContainer"]
-unique_name_in_owner = true
+[node name="StatsContainer" type="HBoxContainer" parent="MainContainer/MarginContainer/VBoxContainer/StatusBar/HBoxContainer"]
 layout_mode = 2
 theme_override_constants/separation = 20
 
-[node name="MainButtonsContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer2/HFlowContainer/MarginContainer/BottomContainer"]
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="ActionButtonsContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer2/HFlowContainer/MarginContainer/BottomContainer/MainButtonsContainer"]
+[node name="RoomLabel" type="Label" parent="MainContainer/MarginContainer/VBoxContainer/StatusBar/HBoxContainer/StatsContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
+text = "ROOM: 1"
 
-[node name="MoveButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer2/HFlowContainer/MarginContainer/BottomContainer/MainButtonsContainer/ActionButtonsContainer"]
-layout_mode = 2
-text = "Move"
-
-[node name="ShootButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer2/HFlowContainer/MarginContainer/BottomContainer/MainButtonsContainer/ActionButtonsContainer"]
-layout_mode = 2
-text = "Shoot"
-
-[node name="ShootButtonsContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer2/HFlowContainer/MarginContainer/BottomContainer/MainButtonsContainer"]
+[node name="BoltsLabel" type="Label" parent="MainContainer/MarginContainer/VBoxContainer/StatusBar/HBoxContainer/StatsContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+text = "BOLTS: 5"
 
-[node name="ConfirmShootButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer2/HFlowContainer/MarginContainer/BottomContainer/MainButtonsContainer/ShootButtonsContainer"]
-layout_mode = 2
-text = "Confirm"
-
-[node name="GoBackButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer2/HFlowContainer/MarginContainer/BottomContainer/MainButtonsContainer/ShootButtonsContainer"]
-layout_mode = 2
-text = "Back"
-
-[node name="PostGameButtonsContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer2/HFlowContainer/MarginContainer/BottomContainer/MainButtonsContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-
-[node name="RestartButton" type="Button" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer2/HFlowContainer/MarginContainer/BottomContainer/MainButtonsContainer/PostGameButtonsContainer"]
-layout_mode = 2
-text = "Restart"
-
-[node name="Control" type="Control" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer2/HFlowContainer/MarginContainer/BottomContainer/MainButtonsContainer"]
-custom_minimum_size = Vector2(50, 0)
-layout_mode = 2
-
-[node name="SelectedRoomButtonsContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer2/HFlowContainer/MarginContainer/BottomContainer/MainButtonsContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="HBoxContainer" type="HBoxContainer" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer2/HFlowContainer/MarginContainer/BottomContainer/MainButtonsContainer"]
+[node name="CommandContainer" type="HBoxContainer" parent="MainContainer/MarginContainer/VBoxContainer/StatusBar/HBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 10
 
-[node name="ArrowsLabel" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer2/HFlowContainer/MarginContainer/BottomContainer/MainButtonsContainer/HBoxContainer"]
+[node name="PromptLabel" type="Label" parent="MainContainer/MarginContainer/VBoxContainer/StatusBar/HBoxContainer/CommandContainer"]
 layout_mode = 2
-text = "Bolts:"
+text = ">"
 
-[node name="ArrowsCount" type="Label" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer2/HFlowContainer/MarginContainer/BottomContainer/MainButtonsContainer/HBoxContainer"]
+[node name="CommandButtons" type="HBoxContainer" parent="MainContainer/MarginContainer/VBoxContainer/StatusBar/HBoxContainer/CommandContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "5"
+theme_override_constants/separation = 10
 
-[node name="ContextButtonsContainer" type="HFlowContainer" parent="PanelContainer/MarginContainer/VBoxContainer/PanelContainer2/HFlowContainer/MarginContainer/BottomContainer"]
-unique_name_in_owner = true
+[node name="MoveButton" type="Button" parent="MainContainer/MarginContainer/VBoxContainer/StatusBar/HBoxContainer/CommandContainer/CommandButtons"]
 layout_mode = 2
-size_flags_vertical = 3
+text = "move"
 
-[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Panel/MarginContainer/RichTextLabel/ShowInstructionsButton" to="." method="_on_show_instructions_button_pressed"]
-[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/PanelContainer/Panel/MarginContainer/InstructionsRichTextLabel/HideInstructionsButton" to="." method="_on_hide_instructions_button_pressed"]
-[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/PanelContainer2/HFlowContainer/MarginContainer/BottomContainer/MainButtonsContainer/ActionButtonsContainer/MoveButton" to="." method="_on_move_button_pressed"]
-[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/PanelContainer2/HFlowContainer/MarginContainer/BottomContainer/MainButtonsContainer/ActionButtonsContainer/ShootButton" to="." method="_on_shoot_button_pressed"]
-[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/PanelContainer2/HFlowContainer/MarginContainer/BottomContainer/MainButtonsContainer/ShootButtonsContainer/ConfirmShootButton" to="." method="_on_confirm_shoot_button_pressed"]
-[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/PanelContainer2/HFlowContainer/MarginContainer/BottomContainer/MainButtonsContainer/ShootButtonsContainer/GoBackButton" to="." method="_on_go_back_button_pressed"]
-[connection signal="pressed" from="PanelContainer/MarginContainer/VBoxContainer/PanelContainer2/HFlowContainer/MarginContainer/BottomContainer/MainButtonsContainer/PostGameButtonsContainer/RestartButton" to="." method="_on_restart_button_pressed"]
+[node name="ShootButton" type="Button" parent="MainContainer/MarginContainer/VBoxContainer/StatusBar/HBoxContainer/CommandContainer/CommandButtons"]
+layout_mode = 2
+text = "shoot"
+
+[node name="DetectButton" type="Button" parent="MainContainer/MarginContainer/VBoxContainer/StatusBar/HBoxContainer/CommandContainer/CommandButtons"]
+layout_mode = 2
+text = "detect"
+
+[node name="HelpButton" type="Button" parent="MainContainer/MarginContainer/VBoxContainer/StatusBar/HBoxContainer/CommandContainer/CommandButtons"]
+layout_mode = 2
+text = "help"
+
+[node name="ActionButtons" type="HBoxContainer" parent="MainContainer/MarginContainer/VBoxContainer/StatusBar/HBoxContainer/CommandContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ConfirmButton" type="Button" parent="MainContainer/MarginContainer/VBoxContainer/StatusBar/HBoxContainer/CommandContainer/ActionButtons"]
+layout_mode = 2
+text = "confirm"
+
+[node name="CancelButton" type="Button" parent="MainContainer/MarginContainer/VBoxContainer/StatusBar/HBoxContainer/CommandContainer/ActionButtons"]
+layout_mode = 2
+text = "cancel"
+
+[node name="RoomButtons" type="HBoxContainer" parent="MainContainer/MarginContainer/VBoxContainer/StatusBar/HBoxContainer/CommandContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[connection signal="pressed" from="MainContainer/MarginContainer/VBoxContainer/ContentPanel/MarginContainer/VBoxContainer/InstructionsText/HideInstructionsButton" to="." method="_on_hide_instructions_button_pressed"]
+[connection signal="pressed" from="MainContainer/MarginContainer/VBoxContainer/StatusBar/HBoxContainer/CommandContainer/CommandButtons/MoveButton" to="." method="_on_move_button_pressed"]
+[connection signal="pressed" from="MainContainer/MarginContainer/VBoxContainer/StatusBar/HBoxContainer/CommandContainer/CommandButtons/ShootButton" to="." method="_on_shoot_button_pressed"]
+[connection signal="pressed" from="MainContainer/MarginContainer/VBoxContainer/StatusBar/HBoxContainer/CommandContainer/CommandButtons/DetectButton" to="." method="_on_detect_button_pressed"]
+[connection signal="pressed" from="MainContainer/MarginContainer/VBoxContainer/StatusBar/HBoxContainer/CommandContainer/CommandButtons/HelpButton" to="." method="_on_help_button_pressed"]
+[connection signal="pressed" from="MainContainer/MarginContainer/VBoxContainer/StatusBar/HBoxContainer/CommandContainer/ActionButtons/ConfirmButton" to="." method="_on_confirm_button_pressed"]
+[connection signal="pressed" from="MainContainer/MarginContainer/VBoxContainer/StatusBar/HBoxContainer/CommandContainer/ActionButtons/CancelButton" to="." method="_on_cancel_button_pressed"]
