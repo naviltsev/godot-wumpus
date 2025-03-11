@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=10 format=3 uid="uid://de3namw7hkal8"]
+[gd_resource type="Theme" load_steps=12 format=3 uid="uid://de3namw7hkal8"]
 
 [ext_resource type="FontFile" uid="uid://c58gneaudu2i2" path="res://assets/ModernDOS8x16.ttf" id="1_23gw7"]
 
@@ -85,13 +85,27 @@ border_color = Color(0, 1, 0, 1)
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_23gw7"]
 bg_color = Color(0, 0, 0, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_status"]
+content_margin_left = 10.0
+content_margin_top = 5.0
+content_margin_right = 10.0
+content_margin_bottom = 5.0
+bg_color = Color(0, 0.33, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_title"]
+content_margin_left = 10.0
+content_margin_top = 5.0
+content_margin_right = 10.0
+content_margin_bottom = 5.0
+bg_color = Color(0, 0.33, 0, 1)
+
 [resource]
 Button/colors/font_color = Color(0, 1, 0, 1)
-Button/colors/font_disabled_color = Color(2.26215e-06, 0.503838, 3.85046e-07, 1)
+Button/colors/font_disabled_color = Color(0, 0.5, 0, 1)
 Button/colors/font_focus_color = Color(0, 1, 0, 1)
 Button/colors/font_hover_color = Color(0, 1, 0, 1)
-Button/colors/font_pressed_color = Color(1, 1, 1, 1)
-Button/font_sizes/font_size = 32
+Button/colors/font_pressed_color = Color(0, 0.7, 0, 1)
+Button/font_sizes/font_size = 24
 Button/fonts/font = ExtResource("1_23gw7")
 Button/styles/disabled = SubResource("StyleBoxFlat_lfjf6")
 Button/styles/focus = SubResource("StyleBoxFlat_nb1sn")
@@ -100,16 +114,22 @@ Button/styles/hover_pressed = SubResource("StyleBoxFlat_qg037")
 Button/styles/normal = SubResource("StyleBoxFlat_h0e6p")
 Button/styles/pressed = SubResource("StyleBoxFlat_7rfas")
 Label/colors/font_color = Color(0, 1, 0, 1)
-Label/font_sizes/font_size = 32
+Label/font_sizes/font_size = 24
 Label/fonts/font = ExtResource("1_23gw7")
-MarginContainer/constants/margin_bottom = 10
-MarginContainer/constants/margin_left = 10
-MarginContainer/constants/margin_right = 10
-MarginContainer/constants/margin_top = 10
+MarginContainer/constants/margin_bottom = 5
+MarginContainer/constants/margin_left = 5
+MarginContainer/constants/margin_right = 5
+MarginContainer/constants/margin_top = 5
 Panel/styles/panel = SubResource("StyleBoxFlat_ocnjl")
 PanelContainer/styles/panel = SubResource("StyleBoxFlat_23gw7")
 RichTextLabel/colors/default_color = Color(0, 1, 0, 1)
-RichTextLabel/font_sizes/bold_font_size = 32
-RichTextLabel/font_sizes/normal_font_size = 32
+RichTextLabel/colors/font_selected_color = Color(0, 1, 0, 1)
+RichTextLabel/colors/selection_color = Color(0, 0.33, 0, 1)
+RichTextLabel/font_sizes/bold_font_size = 24
+RichTextLabel/font_sizes/normal_font_size = 24
 RichTextLabel/fonts/bold_font = ExtResource("1_23gw7")
 RichTextLabel/fonts/normal_font = ExtResource("1_23gw7")
+StatusBar/base_type = &"PanelContainer"
+StatusBar/styles/panel = SubResource("StyleBoxFlat_status")
+TitleBar/base_type = &"PanelContainer"
+TitleBar/styles/panel = SubResource("StyleBoxFlat_title")
