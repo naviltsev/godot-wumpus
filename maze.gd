@@ -1,35 +1,59 @@
 class_name Maze
 
-var vertice_connections: Dictionary = {
-	1: [2, 5, 8],
-	2: [1, 3, 10],
-	3: [2, 4, 12], 
-	4: [3, 5, 14],
-	5: [1, 4, 6],
-	6: [5, 7, 15],
-	7: [6, 8, 17],
-	8: [1, 7, 9],
-	9: [8, 10, 18],
-	10: [2, 9, 11],
-	11: [10, 12, 19],
-	12: [3, 11, 13],
-	13: [12, 14, 20],
-	14: [4, 13, 15],
-	15: [6, 14, 16],
-	16: [15, 17, 20],
-	17: [7, 16, 18],
-	18: [9, 17, 19],
-	19: [11, 18, 20],
-	20: [13, 16, 19],
-}
+var bat_vertices: Array[int]
+var pit_vertices: Array[int]
+#var wumpus_vertice: int
 
-var vertice_to_room: Dictionary
+var player: Player
+var wumpus: Wumpus
 
-func shuffle_rooms():
-	var room_names = range(1, 21)
-	#room_names.shuffle()
+func initialize():
+	player = Player.new()
+	wumpus = Wumpus.new()
+	
+	# init hazards + setup Wumpus
+	init_hazards()
 
-	for vertice in range(1, 21):
-		vertice_to_room[vertice] = room_names[vertice-1]
+	# init player
+	init_player()
 
-	print(vertice_to_room)
+func init_hazards():
+	bat_vertices = []
+	pit_vertices = []
+
+	var vertices = range(1, 21)
+	for i in range(0, 2):
+		vertices.shuffle()
+		var bat = vertices[randi_range(0, vertices.size()-1)]
+		vertices.erase(bat)
+		bat_vertices.append(bat)
+		print("viral storm room ", MazeConfig.vertice_to_room[bat])
+
+	for i in range(0, 2):
+		vertices.shuffle()
+		var pit = vertices[randi_range(0, vertices.size()-1)]
+		vertices.erase(pit)
+		pit_vertices.append(pit)
+		print("clickbait loop room ", MazeConfig.vertice_to_room[pit])
+
+	vertices.shuffle()
+	var wumpus_vertice = vertices[randi_range(0, vertices.size()-1)]
+	vertices.erase(wumpus_vertice)
+	wumpus.current_room_vertice = wumpus_vertice
+	print("SNARF room ", MazeConfig.vertice_to_room[wumpus_vertice])
+
+func init_player():
+	player.move(pick_random_room())
+	Global.update_room_connections.emit(self)
+
+# picks random room based
+# takes hazards into account and doesn't pick the room occupied by a hazard
+func pick_random_room() -> int:
+	var all_vertices = range(1, 21)
+	for v in bat_vertices:
+		all_vertices.erase(v)
+	for v in pit_vertices:
+		all_vertices.erase(v)
+	all_vertices.erase(wumpus.current_room_vertice)
+
+	return all_vertices[randi_range(0, all_vertices.size()-1)]

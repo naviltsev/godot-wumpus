@@ -1,19 +1,7 @@
 extends Node
 
-# Globals to keep vertice indices of hazards - pits, bats, wumpus
-var bat_vertices: Array[int]
-var pit_vertices: Array[int]
-var wumpus_vertice: int
-
-# Is Wumpus asleep?
-var wumpus_asleep = true
-
 # Rooms to shoot at
 var shoot_room_vertices: Array[int]
-
-# Global to keep current room vertice and name
-var current_room_vertice: int
-var current_room_name: int
 
 # Vertice IDs connected to the current_room
 var connected_vertices = []
@@ -22,3 +10,15 @@ var connected_rooms = []
 
 # arrows left
 var arrows_count = 5
+
+signal update_room_connections(maze: Maze)
+
+func _ready():
+	update_room_connections.connect(_update_room_connections)
+
+# accept maze
+func _update_room_connections(maze: Maze):
+	connected_rooms = []
+	connected_vertices = MazeConfig.vertice_connections[maze.player.current_room_vertice]
+	for v in connected_vertices:
+		connected_rooms.append(MazeConfig.vertice_to_room[v])

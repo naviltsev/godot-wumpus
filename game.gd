@@ -29,7 +29,7 @@ signal move_at(vertice_id: int)
 signal shoot_at(vertice_id: int)
 
 # Maze
-var maze = Maze.new()
+var maze: Maze
 
 func _ready():
 	start_game(true, false)
@@ -37,6 +37,28 @@ func _ready():
 	tell_room_name()
 	tell_connected_room_names()
 	tell_status_update()
+
+func start_game(reshuffle_rooms: bool, clear_text_window: bool = false):
+	rtl.visible = true
+	instructions_rtl.visible = false
+
+	hide_restart_button()
+
+	Global.arrows_count = 5
+	update_arrows_count()
+	
+	maze = Maze.new()
+
+	# (re)build maze with hazards, wumpus and player
+	# wumpus is available at maze.wumpus
+	# player is available at maze.player
+	maze.initialize()
+	
+	#Global.wumpus_asleep = true
+	Global.shoot_room_vertices = []
+
+	if clear_text_window:
+		rtl.text = ""
 
 func hide_restart_button():
 	action_buttons_container.visible = true
@@ -58,42 +80,11 @@ func hide_post_shoot_buttons():
 	shoot_buttons_container.visible = false
 	post_game_buttons_container.visible = false
 
-func start_game(reshuffle_rooms: bool, clear_text_window: bool = false):
-	rtl.visible = true
-	instructions_rtl.visible = false
-
-	hide_restart_button()
-
-	Global.arrows_count = 5
-	update_arrows_count()
-	
-	Global.wumpus_asleep = true
-	Global.shoot_room_vertices = []
-
-	if clear_text_window:
-		rtl.text = ""
-
-	# reshuffle maze
-	if reshuffle_rooms:
-		maze.shuffle_rooms()
-
-	# setup hazards first
-	setup_hazards()
-
-	# then randomly chose start room
-	setup_start_room()
-
-func update_room_connections():
-	Global.connected_rooms = []
-	Global.connected_vertices = maze.vertice_connections[Global.current_room_vertice]
-	for v in Global.connected_vertices:
-		Global.connected_rooms.append(maze.vertice_to_room[v])
-
 func update_arrows_count():
 	arrows_count_label.text = str(Global.arrows_count)
 
 func tell_room_name():
-	append_new_line("\n[b][color=black][bgcolor=green]You are on page %d[/bgcolor][/color][/b]" % Global.current_room_name) 
+	append_new_line("\n[b][color=black][bgcolor=green]You are on page %d[/bgcolor][/color][/b]" % maze.player.current_room_name) 
 
 func tell_connected_room_names():
 	append_new_line("You can visit pages %d, %d and %d" % Global.connected_rooms)
@@ -109,11 +100,11 @@ func tell_status_update():
 		"wumpus": false,
 	}
 	for v in Global.connected_vertices:
-		if Global.bat_vertices.has(v):
+		if maze.bat_vertices.has(v):
 			ret["bat"] = true
-		if Global.pit_vertices.has(v):
+		if maze.pit_vertices.has(v):
 			ret["pit"] = true
-		if v == Global.wumpus_vertice:
+		if v == maze.wumpus.current_room_vertice:
 			ret["wumpus"] = true
 
 	if ret["bat"]: # viral storm
@@ -123,58 +114,6 @@ func tell_status_update():
 	if ret["wumpus"]: # SNARF
 		append_new_line("\tIt smells like SNARF code")
 
-func setup_hazards():
-	Global.bat_vertices = []
-	Global.pit_vertices = []
-
-	var vertices = range(1, 21)
-	for i in range(0, 2):
-		vertices.shuffle()
-		var bat = vertices[randi_range(0, vertices.size()-1)]
-		vertices.erase(bat)
-		Global.bat_vertices.append(bat)
-		print("viral storm room ", maze.vertice_to_room[bat])
-
-	for i in range(0, 2):
-		vertices.shuffle()
-		var pit = vertices[randi_range(0, vertices.size()-1)]
-		vertices.erase(pit)
-		Global.pit_vertices.append(pit)
-		print("clickbait loop room ", maze.vertice_to_room[pit])
-
-	vertices.shuffle()
-	var wumpus = vertices[randi_range(0, vertices.size()-1)]
-	vertices.erase(wumpus)
-	Global.wumpus_vertice = wumpus
-	print("SNARF room ", maze.vertice_to_room[wumpus])
-
-# picks random room based
-# takes hazards into account and doesn't pick the room occupied by a hazard
-func pick_random_room() -> int:
-	var all_vertices = range(1, 21)
-	for v in Global.bat_vertices:
-		all_vertices.erase(v)
-	for v in Global.pit_vertices:
-		all_vertices.erase(v)
-	all_vertices.erase(Global.wumpus_vertice)
-
-	return all_vertices[randi_range(0, all_vertices.size()-1)]
-
-func setup_start_room():
-	Global.current_room_vertice = pick_random_room()
-	Global.current_room_name = maze.vertice_to_room[Global.current_room_vertice]
-	update_room_connections()
-
-func move_wumpus():
-	if Global.wumpus_asleep:
-		return
-
-	var connections = maze.vertice_connections[Global.wumpus_vertice]
-	if randi_range(0, 100) > 25: # move
-		Global.wumpus_vertice = connections.pick_random()
-		print("SNARF moved to %d" % Global.wumpus_vertice)
-	else:
-		print("SNARF stays")
 
 func append_new_line(text: String = ""):
 	rtl.text += text + "\n"
@@ -234,31 +173,31 @@ func on_shoot_context_button_pressed(b: Button, vertice_id: int):
 func on_move_context_button_pressed(vertice_id: int):
 	clear_context_buttons()
 
-	Global.current_room_vertice = vertice_id
-	Global.current_room_name = maze.vertice_to_room[Global.current_room_vertice]
-	update_room_connections()
+	maze.player.move(vertice_id)
+	Global.update_room_connections.emit(maze)
 
 	tell_room_name()
 
 	var wumpus_moved_to_another_room = false
-	if Global.bat_vertices.has(Global.current_room_vertice):
+	if maze.bat_vertices.has(maze.player.current_room_vertice):
 		append_new_line("There's a Viral Storm! It took you to another page!")
-		setup_start_room()
+		maze.init_player() # instead of old setup_start_room()
 		tell_room_name()
-	elif Global.pit_vertices.has(Global.current_room_vertice):
+	elif maze.pit_vertices.has(maze.player.current_room_vertice):
 		append_new_line("You stuck in a Clickbait Loop... forever!")
 		show_restart_button()
 		return
-	elif Global.wumpus_vertice == Global.current_room_vertice:
+	elif maze.wumpus.current_room_vertice == maze.player.current_room_vertice:
 		var was_asleep = false
-		if Global.wumpus_asleep:
+		if maze.wumpus.is_asleep:
 			was_asleep = true
-			Global.wumpus_asleep = false
+			maze.wumpus.is_asleep = false
 
-		var original_wumpus_vertice = Global.wumpus_vertice
-		move_wumpus() # move_wumpus() will update wumpus_vertice with 75% chance
+		var original_wumpus_vertice = maze.wumpus.current_room_vertice
+		#move_wumpus() # move_wumpus() will update wumpus_vertice with 75% chance
+		maze.wumpus.move()
 		wumpus_moved_to_another_room = true
-		if original_wumpus_vertice == Global.wumpus_vertice:
+		if original_wumpus_vertice == maze.wumpus.current_room_vertice:
 			if was_asleep:
 				append_new_line("You entered a SNARF page, activated it, and it... absorbed you... forever!")
 			else:
@@ -271,7 +210,7 @@ func on_move_context_button_pressed(vertice_id: int):
 
 	tell_connected_room_names()
 	if not wumpus_moved_to_another_room:
-		move_wumpus()
+		maze.wumpus.move()
 	tell_status_update()
 
 func _on_move_button_pressed() -> void:
@@ -310,19 +249,17 @@ func _on_confirm_shoot_button_pressed():
 	clear_context_buttons()
 	clear_selected_room_buttons()
 
-	var cur_vertice = Global.current_room_vertice
+	var cur_vertice = maze.player.current_room_vertice
 	var cur_connections = []
 
 	var arrow_flight_path = []
 	
-	# TODO check that room where you are now can not be selected!
-	# TODO the arrow is too crooked - if current room is selected, any other should be chosen instead
 	for v in Global.shoot_room_vertices:
-		cur_connections = maze.vertice_connections[cur_vertice].duplicate()
+		cur_connections = MazeConfig.vertice_connections[cur_vertice].duplicate()
 
 		# ensure the room the hunter is in will never be used in arrow flight path
-		if cur_connections.has(Global.current_room_vertice):
-			cur_connections.erase(Global.current_room_vertice)
+		if cur_connections.has(maze.player.current_room_vertice):
+			cur_connections.erase(maze.player.current_room_vertice)
 
 		# check if next room of arrow's path is connected with the current room vertice
 		if cur_connections.has(v):
@@ -337,31 +274,28 @@ func _on_confirm_shoot_button_pressed():
 
 	Global.shoot_room_vertices = []
 
-	if Global.wumpus_asleep == true:
-		Global.wumpus_asleep = false
+	if maze.wumpus.is_asleep == true:
+		maze.wumpus.is_asleep = false
 		append_new_line("\nYou shot a bolt and activated SNARF!")
 
 	append_new_line("\nBolt has visited the following pages: ")
 
 	for v in arrow_flight_path:
 		append_new_line("* Page %d" % v)
-		if v == Global.current_room_vertice:
+		if v == maze.player.current_room_vertice:
 			append_new_line("\tWhat a pity, the bolt returned to the page you're on and disconnected you ((")
 			show_restart_button()
 			return
-		if v == Global.wumpus_vertice:
+		if v == maze.wumpus.current_room_vertice:
 			append_new_line("\tThe bolt has reached and deactivated SNARF... forever!")
 			show_restart_button()
 			return
-		if Global.bat_vertices.has(v):
-			Global.bat_vertices.erase(v)
+		if maze.bat_vertices.has(v):
+			maze.bat_vertices.erase(v)
 			append_new_line("\tThe bolt managed to defuse the Viral Storm on page %d!" % v)
-		if Global.pit_vertices.has(v):
-			Global.pit_vertices.erase(v)
-			append_new_line("\tThe bolt managed to deactivate Clickbait Loop on page %d!" % v)
 
-	move_wumpus() # move_wumpus() will update wumpus_vertice with 75% chance
-	if Global.wumpus_vertice == Global.current_room_vertice:
+	maze.wumpus.move()
+	if maze.wumpus.current_room_vertice == maze.player.current_room_vertice:
 		append_new_line("\nThe SNARF has moved on to a nearby page, but what a pity, it was a page you're on! DISCONNECT!")
 		show_restart_button()
 		return
